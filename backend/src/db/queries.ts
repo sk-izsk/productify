@@ -23,7 +23,14 @@ export const getUserById = async (id: string) => {
 
 // Update existing user
 
-export const updateUser = async (id: string, data: Partial<NewUser>) => {
+export const updateUser = async (
+  id: string,
+  data: Partial<Omit<NewUser, "id">>,
+) => {
+  const existingUser = await getUserById(id)
+  if (!existingUser) {
+    throw new Error(`user doesnt exist with id ${id}`)
+  }
   const [user] = await db
     .update(users)
     .set(data)
@@ -33,13 +40,18 @@ export const updateUser = async (id: string, data: Partial<NewUser>) => {
 }
 
 export const upsertUser = async (data: NewUser) => {
-  const existingUser = await getUserById(data.id)
+  const { id, ...update } = data
 
-  if (existingUser) {
-    return updateUser(data.id, data)
-  }
+  const [user] = await db
+    .insert(users)
+    .values(data)
+    .onConflictDoUpdate({
+      target: users.id,
+      set: update,
+    })
+    .returning()
 
-  return createUser(data)
+  return user
 }
 
 // Product Queries
@@ -88,7 +100,10 @@ export const getProductsByUserId = async (id: string) => {
   return listOfUserProduct
 }
 
-export const updateProduct = async (id: string, data: Partial<NewProducts>) => {
+export const updateProduct = async (
+  id: string,
+  data: Partial<Omit<NewProducts, "id">>,
+) => {
   const [product] = await db
     .update(products)
     .set(data)
