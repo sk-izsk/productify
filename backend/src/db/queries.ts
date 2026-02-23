@@ -104,6 +104,10 @@ export const updateProduct = async (
   id: string,
   data: Partial<Omit<NewProducts, "id">>,
 ) => {
+  const existingProduct = await getProductById(id)
+  if (!existingProduct) {
+    throw new Error(`product doesnt exist with id ${id}`)
+  }
   const [product] = await db
     .update(products)
     .set(data)
@@ -114,6 +118,10 @@ export const updateProduct = async (
 }
 
 export const deleteProduct = async (id: string) => {
+  const existingProduct = await getProductById(id)
+  if (!existingProduct) {
+    throw new Error(`product doesnt exist with id ${id}`)
+  }
   const [product] = await db
     .delete(products)
     .where(eq(products.id, id))
@@ -131,6 +139,10 @@ export const createComment = async (data: NewComments) => {
 }
 
 export const deleteComment = async (id: string) => {
+  const existingComment = await getCommentById(id)
+  if (!existingComment) {
+    throw new Error(`comment doesnt exist with id ${id}`)
+  }
   const [comment] = await db
     .delete(comments)
     .where(eq(comments.id, id))
