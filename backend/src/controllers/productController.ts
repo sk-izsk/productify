@@ -14,13 +14,13 @@ export const getAllProducts = async (request: Request, response: Response) => {
 export const getProductById = async (request: Request, response: Response) => {
   try {
     const { id } = request.params
-    const product = await dbQueries.getProductsByUserId(id as string)
+    const product = await dbQueries.getProductById(id as string)
     if (!product) {
-      response.status(404).json({ error: "No products found" })
+      return response.status(404).json({ error: "Product not found" })
     }
     response.status(200).json(product)
   } catch (error) {
-    console.error("Error fetching products:", error)
+    console.error("Error fetching product:", error)
     response.status(500).json({ error: "Failed to fetch products" })
   }
 }
@@ -48,11 +48,11 @@ export const createProduct = async (request: Request, response: Response) => {
       return
     }
 
-    const { title, description, price, imageUrl } = request.body
+    const { title, description, imageUrl } = request.body
 
-    if (!title || !description || !price || !imageUrl) {
+    if (!title || !description || !imageUrl) {
       return response.status(400).json({
-        error: "Title, description, price and imageUrl are required",
+        error: "Title, description and imageUrl are required",
       })
     }
 
@@ -77,7 +77,7 @@ export const updateProduct = async (request: Request, response: Response) => {
       return
     }
     const { id } = request.params
-    const { title, description, price, imageUrl } = request.body
+    const { title, description, imageUrl } = request.body
 
     const existingProduct = await dbQueries.getProductById(id as string)
     if (!existingProduct) {
