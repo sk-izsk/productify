@@ -37,10 +37,15 @@ const THEMES = [
   "sunset",
 ]
 
-const defaultTheme = localStorage.getItem("theme") || "forest"
+const getInitialTheme = (): string => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("theme") || "forest"
+  }
+  return "forest" // SSR fallback
+}
 
 export const ThemeSelector: React.FC = () => {
-  const [theme, setTheme] = useState<string>(defaultTheme)
+  const [theme, setTheme] = useState<string>(() => getInitialTheme())
 
   useLayoutEffect(() => {
     document.documentElement.setAttribute("data-theme", theme)
