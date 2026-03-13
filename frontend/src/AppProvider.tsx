@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import React, { type PropsWithChildren } from "react"
 import { BrowserRouter } from "react-router"
+import { AuthProvider } from "./providers/AuthProvider"
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -16,7 +17,9 @@ export const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
     <>
       <QueryClientProvider client={queryClient}>
         <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-          <BrowserRouter>{children}</BrowserRouter>
+          <AuthProvider>
+            <BrowserRouter>{children}</BrowserRouter>
+          </AuthProvider>
         </ClerkProvider>
       </QueryClientProvider>
     </>
