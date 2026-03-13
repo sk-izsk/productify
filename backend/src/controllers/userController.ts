@@ -4,6 +4,8 @@ import { requireUserId } from "../utils/auth"
 
 export const syncUser = async (request: Request, response: Response) => {
   try {
+    console.log("response: ", response)
+    console.log("request: ", request)
     const userId = requireUserId(request, response)
     if (!userId) {
       return

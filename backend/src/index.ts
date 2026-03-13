@@ -10,6 +10,7 @@ const app = express()
 app.use(
   cors({
     origin: ENV.FRONTEND_URL,
+    credentials: true,
   }),
 )
 app.use(clerkMiddleware()) // auth will be attached to the req
@@ -22,6 +23,14 @@ app.use(
 
 const port = ENV.PORT
 
+// Root route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Productify API is running!",
+    health: "/api/health",
+  })
+})
+
 app.get("/api/health", (req, res) => {
   res.json({
     message:
@@ -33,6 +42,16 @@ app.get("/api/health", (req, res) => {
     },
   })
 })
+
+// app.use("/api/users", (req, res, next) => {
+//   console.log("--- User Route Debug ---")
+//   console.log("Headers:", req.headers)
+//   console.log("Auth header:", req.headers.authorization)
+//   console.log("Method:", req.method)
+//   console.log("URL:", req.url)
+//   console.log("Body:", req.body)
+//   next()
+// })
 
 app.use("/api/users", userRoutes)
 app.use("/api/products", productRoutes)
