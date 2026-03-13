@@ -1,6 +1,6 @@
 import { PaletteIcon } from "lucide-react"
 import React, { useLayoutEffect, useState } from "react"
-import { cn } from "../Utils/tailwindClass"
+import { cn } from "../utils/tailwindClass"
 
 const THEMES = [
   "light",
@@ -45,12 +45,14 @@ const getInitialTheme = (): string => {
 }
 
 export const ThemeSelector: React.FC = () => {
-  const [theme, setTheme] = useState<string>(() => getInitialTheme())
+  const [selectedTheme, setSelectedTheme] = useState<string>(() =>
+    getInitialTheme(),
+  )
 
   useLayoutEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme)
-    localStorage.setItem("theme", theme)
-  }, [theme])
+    document.documentElement.setAttribute("data-theme", selectedTheme)
+    localStorage.setItem("theme", selectedTheme)
+  }, [selectedTheme])
 
   return (
     <div className="dropdown dropdown-end">
@@ -63,16 +65,16 @@ export const ThemeSelector: React.FC = () => {
         tabIndex={0}
         className="dropdown-content menu bg-base-200 rounded-box z-50 w-56 p-2 shadow-xl max-h-96 overflow-y-auto flex-nowrap"
       >
-        {THEMES.map((t) => (
-          <li key={t}>
+        {THEMES.map((theme) => (
+          <li key={theme}>
             <button
-              onClick={() => setTheme(t)}
+              onClick={() => setSelectedTheme(theme)}
               className={cn("flex justify-between", {
-                "bg-primary text-primary-content": theme === t,
+                "bg-primary text-primary-content": selectedTheme === theme,
               })}
             >
-              <span className="capitalize">{t}</span>
-              <div className="flex gap-0.5" data-theme={t}>
+              <span className="capitalize">{theme}</span>
+              <div className="flex gap-0.5" data-theme={theme}>
                 <span className="w-2 h-4 rounded-sm bg-primary" />
                 <span className="w-2 h-4 rounded-sm bg-secondary" />
                 <span className="w-2 h-4 rounded-sm bg-accent" />

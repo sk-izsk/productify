@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import React, { type PropsWithChildren } from "react"
 import { BrowserRouter } from "react-router"
 
@@ -8,12 +9,16 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Clerk publishable key")
 }
 
+const queryClient = new QueryClient()
+
 export const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
-      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-        <BrowserRouter>{children}</BrowserRouter>
-      </ClerkProvider>
+      <QueryClientProvider client={queryClient}>
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+          <BrowserRouter>{children}</BrowserRouter>
+        </ClerkProvider>
+      </QueryClientProvider>
     </>
   )
 }
