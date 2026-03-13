@@ -2,17 +2,8 @@ import { Suspense } from "react"
 import { AppRouter } from "./AppRouter"
 import { AuthSync } from "./components/AuthSync"
 import { Navbar } from "./components/Navbar"
-import { useAuthReq } from "./hooks/web/useAuthReq"
-import { useUserSync } from "./hooks/web/useUserSync"
 
 const App = () => {
-  const { isClerkLoaded, isSignedIn } = useAuthReq()
-  console.log("isSignedIn: ", isSignedIn)
-  useUserSync()
-
-  if (!isClerkLoaded) {
-    return null
-  }
   return (
     <Suspense
       fallback={<span className="loading loading-ring loading-xl"></span>}

@@ -3,13 +3,13 @@ export interface User {
   email: string
   name: string | null
   imageUrl: string | null
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Comment {
   id: string
-  createdAt: Date
+  createdAt: string
   userId: string
   content: string
   productId: string
@@ -18,8 +18,8 @@ export interface Comment {
 export interface Product {
   id: string
   imageUrl: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
   title: string
   description: string
   userId: string
