@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/react"
 import React, { useEffect, useState } from "react"
-import { baseApi } from "../api/baseApi"
+import { setAuthToken } from "../api/baseApi"
 import { AuthContext, type AuthContextType } from "../contexts/authContext"
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -25,6 +25,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               isAuthenticated: true,
               isLoading: false,
             })
+            // Update global auth token for ky
+            setAuthToken(token)
           } catch (error) {
             console.error("Failed to get token:", error)
             setAuthState({
@@ -32,6 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               isAuthenticated: false,
               isLoading: false,
             })
+            setAuthToken(null)
           }
         } else {
           setAuthState({
@@ -39,32 +42,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             isAuthenticated: false,
             isLoading: false,
           })
+          setAuthToken(null)
         }
       }
     }
 
     updateAuth()
   }, [isSignedIn, getToken, isLoaded])
-
-  // Set up axios interceptor with current auth state
-  useEffect(() => {
-    const interceptor = baseApi.interceptors.request.use(
-      (config) => {
-        if (authState.token) {
-          config.headers.Authorization = `Bearer ${authState.token}`
-        }
-        return config
-      },
-      (error) => {
-        return Promise.reject(error)
-      },
-    )
-
-    // Cleanup interceptor on unmount or auth state change
-    return () => {
-      baseApi.interceptors.request.eject(interceptor)
-    }
-  }, [authState.token])
 
   return (
     <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
