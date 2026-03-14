@@ -1,9 +1,8 @@
-import { SignInButton, SignUpButton, useAuth } from "@clerk/react"
+import { SignInButton, SignUpButton, useAuth, UserButton } from "@clerk/react"
 import { PlusIcon, ShoppingBagIcon, UserIcon } from "lucide-react"
 import React from "react"
 import { Link } from "react-router"
 import { ThemeSelector } from "./ThemeSelector"
-import { UserButton } from "./UserButton"
 
 export const Navbar: React.FC = () => {
   const { isSignedIn } = useAuth()

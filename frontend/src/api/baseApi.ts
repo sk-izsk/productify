@@ -1,19 +1,30 @@
-import axios from "axios"
-import AuthStore from "./authStore"
+import ky from "ky"
 
-export const baseApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+// Global auth token storage for ky hooks
+let authToken: string | null = null
+
+export const setAuthToken = (token: string | null) => {
+  authToken = token
+}
+
+export const getAuthToken = (): string | null => {
+  return authToken
+}
+
+export const baseApi = ky.create({
+  prefixUrl: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
-})
-
-// Add authentication interceptor
-baseApi.interceptors.request.use(async (config) => {
-  const token = AuthStore.getToken()
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
+  credentials: "include",
+  hooks: {
+    beforeRequest: [
+      (request) => {
+        const token = getAuthToken()
+        if (token) {
+          request.headers.set("Authorization", `Bearer ${token}`)
+        }
+      },
+    ],
+  },
 })
