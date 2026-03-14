@@ -11,6 +11,9 @@ export const useUpdateProduct = () => {
         queryKey: ["product", variables.productId],
       })
       queryClient.invalidateQueries({
+        queryKey: ["products", variables.productId],
+      })
+      queryClient.invalidateQueries({
         queryKey: ["myProducts"],
       })
     },
