@@ -1,5 +1,5 @@
 import { PaletteIcon } from "lucide-react"
-import React, { useLayoutEffect, useState } from "react"
+import React, { useLayoutEffect, useMemo, useState } from "react"
 import { cn } from "../utils/tailwindClass"
 
 const THEMES = [
@@ -54,6 +54,27 @@ export const ThemeSelector: React.FC = () => {
     localStorage.setItem("theme", selectedTheme)
   }, [selectedTheme])
 
+  const listOfTheme = useMemo(() => {
+    return THEMES.map((theme) => (
+      <li key={theme}>
+        <button
+          onClick={() => setSelectedTheme(theme)}
+          className={cn("flex justify-between", {
+            "bg-primary text-primary-content": selectedTheme === theme,
+          })}
+        >
+          <span className="capitalize">{theme}</span>
+          <div className="flex gap-0.5" data-theme={theme}>
+            <span className="w-2 h-4 rounded-sm bg-primary" />
+            <span className="w-2 h-4 rounded-sm bg-secondary" />
+            <span className="w-2 h-4 rounded-sm bg-accent" />
+            <span className="w-2 h-4 rounded-sm bg-neutral" />
+          </div>
+        </button>
+      </li>
+    ))
+  }, [selectedTheme])
+
   return (
     <div className="dropdown dropdown-end">
       <div tabIndex={0} role="button" className="btn btn-ghost btn-sm gap-1">
@@ -65,24 +86,7 @@ export const ThemeSelector: React.FC = () => {
         tabIndex={0}
         className="dropdown-content menu bg-base-200 rounded-box z-50 w-56 p-2 shadow-xl max-h-96 overflow-y-auto flex-nowrap"
       >
-        {THEMES.map((theme) => (
-          <li key={theme}>
-            <button
-              onClick={() => setSelectedTheme(theme)}
-              className={cn("flex justify-between", {
-                "bg-primary text-primary-content": selectedTheme === theme,
-              })}
-            >
-              <span className="capitalize">{theme}</span>
-              <div className="flex gap-0.5" data-theme={theme}>
-                <span className="w-2 h-4 rounded-sm bg-primary" />
-                <span className="w-2 h-4 rounded-sm bg-secondary" />
-                <span className="w-2 h-4 rounded-sm bg-accent" />
-                <span className="w-2 h-4 rounded-sm bg-neutral" />
-              </div>
-            </button>
-          </li>
-        ))}
+        {listOfTheme}
       </ul>
     </div>
   )

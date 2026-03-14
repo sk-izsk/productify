@@ -1,4 +1,4 @@
-import type { NewUser, User } from "../types"
+import type { NewUser, Product, User } from "../types"
 import { baseApi } from "./baseApi"
 
 export const syncUser = async (userData: Partial<User> | NewUser) => {
@@ -9,31 +9,34 @@ export const syncUser = async (userData: Partial<User> | NewUser) => {
 }
 
 export const getAllProducts = async () => {
-  const response = await baseApi.get("products")
+  const response = await baseApi.get<Partial<Product>[]>("products")
   return response.json()
 }
 
 export const getProductById = async (productId: string) => {
-  const response = await baseApi.get(`products/${productId}`)
+  const response = await baseApi.get<Partial<Product>>(`products/${productId}`)
   return response.json()
 }
 
 export const getMyProducts = async () => {
-  const response = await baseApi.get("products/my")
+  const response = await baseApi.get<Partial<Product>[]>("products/my")
   return response.json()
 }
 
-export const createProduct = async (formData: FormData) => {
-  const response = await baseApi.post("products", {
-    body: formData,
+export const createProduct = async (formData: Partial<Product>) => {
+  const response = await baseApi.post<Partial<Product>>("products", {
+    json: formData,
   })
   return response.json()
 }
 
 export const updateProduct = async (productId: string, formData: FormData) => {
-  const response = await baseApi.put(`products/${productId}`, {
-    body: formData,
-  })
+  const response = await baseApi.put<Partial<Product>>(
+    `products/${productId}`,
+    {
+      body: formData,
+    },
+  )
   return response.json()
 }
 

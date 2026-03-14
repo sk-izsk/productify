@@ -23,6 +23,7 @@ export interface Product {
   title: string
   description: string
   userId: string
+  users?: User
 }
 
 export type NewUser = Pick<User, "id" | "email"> &

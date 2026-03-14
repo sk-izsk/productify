@@ -1,5 +1,6 @@
 import React from "react"
-import { Route, Routes, type RouteProps } from "react-router"
+import { Navigate, Route, Routes, type RouteProps } from "react-router"
+import { useAuthContext } from "./contexts/authContext"
 import {
   CreateProductScreen,
   EditProductScreen,
@@ -8,7 +9,9 @@ import {
   ProfileScreen,
 } from "./lazyComponents"
 
-const routes: RouteProps[] = [
+const routes: (RouteProps & {
+  isPrivate?: boolean
+})[] = [
   {
     path: "/",
     element: <HomeScreen />,
@@ -20,23 +23,41 @@ const routes: RouteProps[] = [
   {
     path: "/profile",
     element: <ProfileScreen />,
+    isPrivate: true,
   },
   {
     path: "/create",
     element: <CreateProductScreen />,
+    isPrivate: true,
   },
   {
     path: "/edit/:id",
     element: <EditProductScreen />,
+    isPrivate: true,
   },
 ]
 
 export const AppRouter: React.FC = () => {
+  const { isAuthenticated } = useAuthContext()
   return (
     <Routes>
-      {routes.map((route) => (
-        <Route key={route.path} {...route} />
-      ))}
+      {routes.map((route) => {
+        const { isPrivate, element, ...routeProps } = route
+
+        return (
+          <Route
+            key={route.path}
+            {...routeProps}
+            element={
+              isPrivate && !isAuthenticated ? (
+                <Navigate to="/" replace />
+              ) : (
+                element
+              )
+            }
+          />
+        )
+      })}
     </Routes>
   )
 }

@@ -54,6 +54,17 @@ app.get("/api/health", (req, res) => {
 // })
 
 app.use("/api/users", userRoutes)
+
+// Debug middleware for products
+app.use("/api/products", (req, res, next) => {
+  console.log("--- Product Route Debug ---")
+  console.log("Method:", req.method)
+  console.log("URL:", req.url)
+  console.log("Auth header:", req.headers.authorization)
+  console.log("Body:", req.body)
+  next()
+})
+
 app.use("/api/products", productRoutes)
 app.use("/api/comments", commentRoutes)
 
