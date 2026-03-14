@@ -1,15 +1,16 @@
 import { LoaderIcon } from "lucide-react"
 import type { PropsWithChildren } from "react"
+import { Link } from "react-router"
 
 interface ScreenProps extends PropsWithChildren {
   isLoading?: boolean
-  error: Error | null
+  isError?: boolean
 }
 
 export const Screen: React.FC<ScreenProps> = ({
   children,
   isLoading,
-  error,
+  isError,
 }) => {
   if (isLoading) {
     return (
@@ -20,10 +21,15 @@ export const Screen: React.FC<ScreenProps> = ({
     )
   }
 
-  if (error) {
+  if (isError) {
     return (
-      <div role="alert" className="alert alert-error">
-        <span>Something went wrong. Please refresh the page.</span>
+      <div className="card bg-base-300 max-w-md mx-auto">
+        <div className="card-body items-center text-center">
+          <h2 className="card-title text-error">Something went wrong</h2>
+          <Link to="/" className="btn btn-primary btn-sm">
+            Go Home
+          </Link>
+        </div>
       </div>
     )
   }

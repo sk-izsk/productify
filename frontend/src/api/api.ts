@@ -30,11 +30,17 @@ export const createProduct = async (formData: Partial<Product>) => {
   return response.json()
 }
 
-export const updateProduct = async (productId: string, formData: FormData) => {
+export const updateProduct = async ({
+  productId,
+  formData,
+}: {
+  productId: string
+  formData: Partial<Product>
+}) => {
   const response = await baseApi.put<Partial<Product>>(
     `products/${productId}`,
     {
-      body: formData,
+      json: formData,
     },
   )
   return response.json()
@@ -45,8 +51,14 @@ export const deleteProduct = async (productId: string) => {
   return response.json()
 }
 
-export const createComment = async (productId: string, content: string) => {
-  const response = await baseApi.post("comments", {
+export const createComment = async ({
+  productId,
+  content,
+}: {
+  productId: string
+  content: string
+}) => {
+  const response = await baseApi.post(`comments/${productId}`, {
     json: {
       productId,
       content,
@@ -55,7 +67,7 @@ export const createComment = async (productId: string, content: string) => {
   return response.json()
 }
 
-export const deleteComment = async (commentId: string) => {
+export const deleteComment = async ({ commentId }: { commentId: string }) => {
   const response = await baseApi.delete(`comments/${commentId}`)
   return response.json()
 }

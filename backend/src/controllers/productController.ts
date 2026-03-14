@@ -48,6 +48,13 @@ export const createProduct = async (request: Request, response: Response) => {
       return
     }
 
+    const existingUser = await dbQueries.getUserById(userId)
+    if (!existingUser) {
+      return response.status(409).json({
+        error: "User is not synced yet. Please try again in a moment.",
+      })
+    }
+
     const { title, description, imageUrl } = request.body
 
     if (!title || !description || !imageUrl) {

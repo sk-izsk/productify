@@ -13,6 +13,7 @@ export interface Comment {
   userId: string
   content: string
   productId: string
+  users?: User
 }
 
 export interface Product {
