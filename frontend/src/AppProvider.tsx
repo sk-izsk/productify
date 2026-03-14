@@ -14,14 +14,12 @@ const queryClient = new QueryClient()
 
 export const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-          <AuthProvider>
-            <BrowserRouter>{children}</BrowserRouter>
-          </AuthProvider>
-        </ClerkProvider>
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+        <AuthProvider>
+          <BrowserRouter>{children}</BrowserRouter>
+        </AuthProvider>
+      </ClerkProvider>
+    </QueryClientProvider>
   )
 }

@@ -1,6 +1,6 @@
-import { LoaderIcon } from "lucide-react"
 import type { PropsWithChildren } from "react"
 import { Link } from "react-router"
+import { Loader } from "../components/Loader"
 
 interface ScreenProps extends PropsWithChildren {
   isLoading?: boolean
@@ -13,12 +13,7 @@ export const Screen: React.FC<ScreenProps> = ({
   isError,
 }) => {
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <LoaderIcon className="size-10 text-primary animate-spin" />
-        <p className="text-sm text-base-content/50">Loading...</p>
-      </div>
-    )
+    return <Loader />
   }
 
   if (isError) {
