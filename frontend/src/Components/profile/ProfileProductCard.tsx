@@ -28,7 +28,7 @@ interface ActionsProps {
 }
 
 interface ProfileProductCardProps {
-  product: Partial<Product>
+  product: Product
   isDeleting?: boolean
   onView: (id: string) => void
   onEdit: (id: string) => void
@@ -70,10 +70,6 @@ export const ProfileProductCard: React.FC<ProfileProductCardProps> = ({
   onEdit,
   onDelete,
 }) => {
-  if (!product.id) {
-    return null
-  }
-
   return (
     <Root>
       <Image src={product.imageUrl} alt={product.title} />
@@ -82,19 +78,19 @@ export const ProfileProductCard: React.FC<ProfileProductCardProps> = ({
         <Description>{product.description}</Description>
         <Actions>
           <button
-            onClick={() => onView(product.id as string)}
+            onClick={() => onView(product.id)}
             className="btn btn-ghost btn-xs gap-1"
           >
             <EyeIcon className="size-3" /> View
           </button>
           <button
-            onClick={() => onEdit(product.id as string)}
+            onClick={() => onEdit(product.id)}
             className="btn btn-ghost btn-xs gap-1"
           >
             <EditIcon className="size-3" /> Edit
           </button>
           <button
-            onClick={() => onDelete(product.id as string)}
+            onClick={() => onDelete(product.id)}
             className="btn btn-ghost btn-xs text-error gap-1"
             disabled={isDeleting}
           >

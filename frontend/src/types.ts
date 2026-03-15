@@ -28,6 +28,11 @@ export interface Product {
   comments?: Comment[]
 }
 
+export type ProductWriteInput = Pick<
+  Product,
+  "title" | "description" | "imageUrl"
+>
+
 export type NewUser = Pick<User, "id" | "email"> &
   Partial<Pick<User, "name" | "imageUrl" | "createdAt" | "updatedAt">>
 

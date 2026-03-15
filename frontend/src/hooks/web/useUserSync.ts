@@ -13,9 +13,6 @@ export const useUserSync = () => {
     onError: (error) => {
       console.error("Failed to sync user:", error)
     },
-    onSuccess: (data) => {
-      console.log("User synced successfully:", data)
-    },
   })
 
   useEffect(() => {

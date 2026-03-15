@@ -14,7 +14,6 @@ type ProductParams = {
 
 const ProductScreen: React.FC = () => {
   const { id } = useParams<ProductParams>()
-  console.log("id: ", id)
   const { userId } = useAuth()
   const navigate = useNavigate()
 

@@ -8,7 +8,6 @@ import { Screen } from "./Screen"
 
 const HomeScreen: React.FC = () => {
   const { data: products, isLoading, isError } = useGetProducts()
-  console.log("products: ", products)
   return (
     <Screen isLoading={isLoading} isError={isError}>
       <div className="space-y-10">

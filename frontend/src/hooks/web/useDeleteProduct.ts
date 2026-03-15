@@ -8,7 +8,7 @@ export const useDeleteProduct = () => {
     mutationKey: ["deleteProduct"],
     mutationFn: deleteProduct,
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<Partial<Product>[] | undefined>(
+      queryClient.setQueryData<Product[] | undefined>(
         ["products"],
         (previousProducts) => {
           if (!previousProducts) {
@@ -21,7 +21,7 @@ export const useDeleteProduct = () => {
         },
       )
 
-      queryClient.setQueryData<Partial<Product>[] | undefined>(
+      queryClient.setQueryData<Product[] | undefined>(
         ["myProducts"],
         (previousProducts) => {
           if (!previousProducts) {

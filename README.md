@@ -43,7 +43,7 @@ Productify is a PERN-style application with Clerk authentication, product CRUD, 
 - Product management (create, read, update, delete)
 - Product ownership checks for update/delete authorization
 - Comments per product
-- Query caching and invalidation with React Query
+- Cache-aware React Query mutations for comments/products
 - API client abstraction with Ky + auth token injection
 
 ## Tech Stack
@@ -150,8 +150,20 @@ Base URL: `http://localhost:3020/api`
 
 - Backend auth helper: `requireUserId(request, response)` centralizes unauthorized handling.
 - Frontend auth state is managed via context provider and consumed by protected routes.
-- React Query invalidation keeps product detail and list views up to date after mutations.
+- React Query cache updates are used for delete flows to avoid unnecessary refetches.
 - Drizzle relations are used for joined reads (product with user + comments + comment user).
+
+## Latest Improvements
+
+- Refactored product cards into a compound component API for clearer composition in Home screen.
+- Refactored create/edit product UI into a shared `ProductForm` compound component.
+- Extracted shared product form state logic into a reusable custom hook.
+- Improved product CTA behavior: signed-in users now go directly to `/create`, while signed-out users open Clerk sign-in modal.
+- Replaced broad `Partial<Product>` usage in core frontend product flows with stricter product and product-write types.
+- Improved delete comment/product UX with cache-first updates instead of full endpoint refetches.
+- Fixed post-delete 404 detail refetch behavior by avoiding active query removal during redirect flow.
+- Removed frontend and backend debug logs/middleware noise and kept meaningful error logging.
+- Preserved and verified build stability after refactors (`frontend` and `backend` TypeScript builds pass).
 
 ## My Accomplishments
 

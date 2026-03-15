@@ -8,7 +8,7 @@ export const useDeleteComment = (productId: string) => {
     mutationKey: ["deleteComment"],
     mutationFn: deleteComment,
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<Partial<Product> | undefined>(
+      queryClient.setQueryData<Product | undefined>(
         ["product", productId],
         (previousProduct) => {
           if (!previousProduct?.comments) {
