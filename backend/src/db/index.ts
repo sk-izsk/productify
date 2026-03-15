@@ -19,7 +19,7 @@ pool.on("connect", () => {
 
 // log when error occurs
 pool.on("error", (error) => {
-  console.log("Something is wrong in data base 🛑")
+  console.log("Something is wrong in data base 🛑", error)
 })
 
 export const db = drizzle({ client: pool, schema })

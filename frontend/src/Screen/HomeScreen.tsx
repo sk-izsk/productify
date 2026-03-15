@@ -1,44 +1,17 @@
+import { PackageIcon } from "lucide-react"
 import React from "react"
+import { Introduction } from "../components/home/Introduction"
+import { NoProductPlaceholder } from "../components/home/NoProductPlaceholder"
+import { ProductCard } from "../components/ProductCard"
 import { useGetProducts } from "../hooks/web/useGetProducts"
 import { Screen } from "./Screen"
-import { SignInButton } from "@clerk/react"
-import { PackageIcon, SparklesIcon } from "lucide-react"
-import { Link } from "react-router"
-import { ProductCard } from "../components/ProductCard"
-import type { Product } from "../types"
 
 const HomeScreen: React.FC = () => {
-  const { data: products, isLoading, error } = useGetProducts()
-  console.log("products: ", products)
+  const { data: products, isLoading, isError } = useGetProducts()
   return (
-    <Screen isLoading={isLoading} error={error}>
+    <Screen isLoading={isLoading} isError={isError}>
       <div className="space-y-10">
-        <div className="hero bg-linear-to-br from-base-300 via-base-200 to-base-300 rounded-box overflow-hidden">
-          <div className="hero-content flex-col lg:flex-row-reverse gap-10 py-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-110" />
-              <img
-                src="/image.png"
-                alt="Creator"
-                className="relative h-64 lg:h-72 rounded-2xl shadow-2xl"
-              />
-            </div>
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
-                Share Your <span className="text-primary">Products</span>
-              </h1>
-              <p className="py-4 text-base-content/60">
-                Upload, discover, and connect with creators.
-              </p>
-              <SignInButton mode="modal">
-                <button className="btn btn-primary">
-                  <SparklesIcon className="size-4" />
-                  Start Selling
-                </button>
-              </SignInButton>
-            </div>
-          </div>
-        </div>
+        <Introduction />
 
         <div>
           <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
@@ -47,24 +20,27 @@ const HomeScreen: React.FC = () => {
           </h2>
 
           {products?.length === 0 ? (
-            <div className="card bg-base-300">
-              <div className="card-body items-center text-center py-16">
-                <PackageIcon className="size-16 text-base-content/20" />
-                <h3 className="card-title text-base-content/50">
-                  No products yet
-                </h3>
-                <p className="text-base-content/40 text-sm">
-                  Be the first to share something!
-                </p>
-                <Link to="/create" className="btn btn-primary btn-sm mt-2">
-                  Create Product
-                </Link>
-              </div>
-            </div>
+            <NoProductPlaceholder />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products?.map((product) => (
-                <ProductCard key={product.id} product={product as Product} />
+                <ProductCard.Root
+                  key={product.id}
+                  to={`/product/${product.id}`}
+                >
+                  <ProductCard.Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                  />
+                  <div className="card-body p-4">
+                    <ProductCard.Title>{product.title}</ProductCard.Title>
+                    <ProductCard.Body>{product.description}</ProductCard.Body>
+                    <ProductCard.UserDetails
+                      name={product.users?.name}
+                      imageUrl={product.users?.imageUrl}
+                    />
+                  </div>
+                </ProductCard.Root>
               ))}
             </div>
           )}

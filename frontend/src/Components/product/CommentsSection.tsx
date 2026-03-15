@@ -1,18 +1,18 @@
-import React, { useState } from "react"
-import type { Comment } from "../types"
 import { SignInButton, useAuth } from "@clerk/react"
-import { useCreateComment } from "../hooks/web/useCreateComment"
-import { useDeleteComment } from "../hooks/web/useDeleteComment"
 import {
   LogInIcon,
   MessageSquareIcon,
   SendIcon,
   Trash2Icon,
 } from "lucide-react"
+import React, { useState } from "react"
+import { useCreateComment } from "../../hooks/web/useCreateComment"
+import { useDeleteComment } from "../../hooks/web/useDeleteComment"
+import type { Comment as ProductComment } from "../../types"
 
 interface Props {
   productId?: string
-  comments?: Comment[]
+  comments?: ProductComment[]
   currentUserId?: string
 }
 
