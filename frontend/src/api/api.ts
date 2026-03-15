@@ -47,7 +47,7 @@ export const updateProduct = async ({
   return response.json()
 }
 
-export const deleteProduct = async (productId: string) => {
+export const deleteProduct = async ({ productId }: { productId: string }) => {
   const response = await baseApi.delete(`products/${productId}`)
   return response.json()
 }

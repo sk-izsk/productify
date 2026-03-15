@@ -25,9 +25,12 @@ const ProductScreen: React.FC = () => {
 
   const handleDelete = () => {
     if (confirm("Delete this product permanently?")) {
-      deleteProduct(id as string, {
-        onSuccess: () => navigate("/"),
-      })
+      deleteProduct(
+        { productId: id as string },
+        {
+          onSuccess: () => navigate("/"),
+        },
+      )
     }
   }
 

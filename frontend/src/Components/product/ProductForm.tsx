@@ -1,9 +1,10 @@
 import { ArrowLeftIcon, FileTextIcon, ImageIcon, TypeIcon } from "lucide-react"
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext } from "react"
 import { Link } from "react-router"
-import type { Product } from "../../types"
-
-type ProductFormData = Pick<Product, "title" | "description" | "imageUrl">
+import {
+  useProductFormData,
+  type ProductFormData,
+} from "../../hooks/useProductFormData"
 
 interface ProductFormProps {
   title: string
@@ -142,21 +143,7 @@ const ProductFormRoot: React.FC<ProductFormProps> = ({
   titleIcon,
   children,
 }) => {
-  const [formData, setFormData] = useState<ProductFormData>({
-    title: initialValues?.title ?? "",
-    description: initialValues?.description ?? "",
-    imageUrl: initialValues?.imageUrl ?? "",
-  })
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name as keyof ProductFormData]: value,
-    }))
-  }
+  const { formData, handleChange } = useProductFormData(initialValues)
 
   const fields = children ?? (
     <>

@@ -13,7 +13,9 @@ const ProfileScreen: React.FC = () => {
   const deleteProduct = useDeleteProduct()
 
   const handleDelete = (id: string) => {
-    if (confirm("Delete this product?")) deleteProduct.mutate(id)
+    if (confirm("Delete this product?")) {
+      deleteProduct.mutate({ productId: id })
+    }
   }
 
   return (
