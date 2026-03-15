@@ -1,12 +1,8 @@
-import {
-  EditIcon,
-  EyeIcon,
-  PackageIcon,
-  PlusIcon,
-  Trash2Icon,
-} from "lucide-react"
+import { PlusIcon } from "lucide-react"
 import React from "react"
 import { Link, useNavigate } from "react-router"
+import { ProfileProductCard } from "../components/profile/ProfileProductCard"
+import { ProfileProductEmptyPlaceholder } from "../components/profile/ProfileProductEmptyPlaceholder"
 import { useDeleteProduct } from "../hooks/web/useDeleteProduct"
 import { useMyProducts } from "../hooks/web/useMyProduct"
 import { Screen } from "./Screen"
@@ -43,59 +39,18 @@ const ProfileScreen: React.FC = () => {
         </div>
 
         {products?.length === 0 ? (
-          <div className="card bg-base-300">
-            <div className="card-body items-center text-center py-16">
-              <PackageIcon className="size-16 text-base-content/20" />
-              <h3 className="card-title text-base-content/50">
-                No products yet
-              </h3>
-              <p className="text-base-content/40 text-sm">
-                Start by creating your first product
-              </p>
-              <Link to="/create" className="btn btn-primary btn-sm mt-4">
-                Create Product
-              </Link>
-            </div>
-          </div>
+          <ProfileProductEmptyPlaceholder />
         ) : (
           <div className="grid gap-4">
             {products?.map((product) => (
-              <div key={product.id} className="card card-side bg-base-300">
-                <figure className="w-32 shrink-0">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.title}
-                    className="h-full object-cover"
-                  />
-                </figure>
-                <div className="card-body p-4">
-                  <h2 className="card-title text-base">{product.title}</h2>
-                  <p className="text-sm text-base-content/60 line-clamp-1">
-                    {product.description}
-                  </p>
-                  <div className="card-actions justify-end mt-2">
-                    <button
-                      onClick={() => navigate(`/product/${product.id}`)}
-                      className="btn btn-ghost btn-xs gap-1"
-                    >
-                      <EyeIcon className="size-3" /> View
-                    </button>
-                    <button
-                      onClick={() => navigate(`/edit/${product.id}`)}
-                      className="btn btn-ghost btn-xs gap-1"
-                    >
-                      <EditIcon className="size-3" /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id!)}
-                      className="btn btn-ghost btn-xs text-error gap-1"
-                      disabled={deleteProduct.isPending}
-                    >
-                      <Trash2Icon className="size-3" /> Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProfileProductCard
+                key={product.id}
+                product={product}
+                isDeleting={deleteProduct.isPending}
+                onView={(id) => navigate(`/product/${id}`)}
+                onEdit={(id) => navigate(`/edit/${id}`)}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         )}

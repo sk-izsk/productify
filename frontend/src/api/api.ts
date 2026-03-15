@@ -20,7 +20,8 @@ export const getProductById = async (productId: string) => {
 
 export const getMyProducts = async () => {
   const response = await baseApi.get<Partial<Product>[]>("products/my")
-  return response.json()
+  const data = await response.json<Partial<Product>[] | { error?: string }>()
+  return Array.isArray(data) ? data : []
 }
 
 export const createProduct = async (formData: Partial<Product>) => {

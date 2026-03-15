@@ -1,14 +1,9 @@
 import { useAuth } from "@clerk/react"
-import {
-  ArrowLeftIcon,
-  CalendarIcon,
-  EditIcon,
-  Trash2Icon,
-  UserIcon,
-} from "lucide-react"
+import { ArrowLeftIcon, EditIcon, Trash2Icon } from "lucide-react"
 import React from "react"
 import { Link, useNavigate, useParams } from "react-router"
-import { CommentsSection } from "../components/CommentsSection"
+import { CommentsSection } from "../components/product/CommentsSection"
+import { ProductDetails } from "../components/product/ProductDetails"
 import { useDeleteProduct } from "../hooks/web/useDeleteProduct"
 import { useGetProduct } from "../hooks/web/useGetProduct"
 import { Screen } from "./Screen"
@@ -79,48 +74,7 @@ const ProductScreen: React.FC = () => {
             </figure>
           </div>
 
-          <div className="card bg-base-300">
-            <div className="card-body">
-              <h1 className="card-title text-2xl">{product?.title}</h1>
-
-              <div className="flex flex-wrap gap-4 text-sm text-base-content/60 my-2">
-                <div className="flex items-center gap-1">
-                  <CalendarIcon className="size-4" />
-                  {new Date(product?.createdAt as string).toLocaleDateString()}
-                </div>
-                <div className="flex items-center gap-1">
-                  <UserIcon className="size-4" />
-                  {product?.users?.name}
-                </div>
-              </div>
-
-              <div className="divider my-2"></div>
-
-              <p className="text-base-content/80 leading-relaxed">
-                {product?.description}
-              </p>
-
-              {product?.users && (
-                <>
-                  <div className="divider my-2"></div>
-                  <div className="flex items-center gap-3">
-                    <div className="avatar">
-                      <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img
-                          src={product?.users.imageUrl || ""}
-                          alt={product?.users.name || ""}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="font-semibold">{product.users.name}</p>
-                      <p className="text-xs text-base-content/50">Creator</p>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+          <ProductDetails product={product} />
         </div>
 
         {/* Comments */}
