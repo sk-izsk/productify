@@ -25,6 +25,7 @@ export interface Product {
   description: string
   userId: string
   users?: User
+  comments?: Comment[]
 }
 
 export type NewUser = Pick<User, "id" | "email"> &

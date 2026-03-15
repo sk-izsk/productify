@@ -1,10 +1,10 @@
 import { useAuth } from "@clerk/react"
+import { SaveIcon } from "lucide-react"
 import React from "react"
 import { useNavigate, useParams } from "react-router"
-import { EditProductForm } from "../components/EditProductForm"
+import { ProductForm } from "../components/product/ProductForm"
 import { useGetProduct } from "../hooks/web/useGetProduct"
 import { useUpdateProduct } from "../hooks/web/useUpdateProduct"
-import type { Product } from "../types"
 import { Screen } from "./Screen"
 
 type EditProductParams = {
@@ -22,11 +22,16 @@ const EditProductScreen: React.FC = () => {
       isError={isError || !product || product.userId !== userId}
       isLoading={isLoading}
     >
-      <EditProductForm
-        product={product!}
+      <ProductForm
+        title="Edit Product"
+        backTo="/profile"
+        submitLabel="Save Changes"
+        errorLabel="Failed to update. Try again."
+        initialValues={product}
         isPending={updateProduct.isPending}
         isError={updateProduct.isError}
-        onSubmit={(formData: Partial<Product>) => {
+        titleIcon={<SaveIcon className="size-5 text-primary" />}
+        onSubmit={(formData) => {
           updateProduct.mutate(
             { productId: id as string, formData },
             {
@@ -34,7 +39,12 @@ const EditProductScreen: React.FC = () => {
             },
           )
         }}
-      />
+      >
+        <ProductForm.TitleInput />
+        <ProductForm.ImageInput />
+        <ProductForm.ImageDisplay />
+        <ProductForm.DescriptionInput />
+      </ProductForm>
     </Screen>
   )
 }

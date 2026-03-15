@@ -82,7 +82,6 @@ const ProductScreen: React.FC = () => {
           <div className="card-body">
             <CommentsSection
               productId={id}
-              // @ts-expect-error sdff
               comments={product?.comments}
               currentUserId={userId!}
             />
