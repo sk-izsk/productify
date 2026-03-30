@@ -1,12 +1,12 @@
 import { eq } from "drizzle-orm"
 import { db } from "./index"
 import {
-  comments,
-  type NewComments,
-  type NewProducts,
-  type NewUser,
-  products,
-  users,
+    comments,
+    type NewComments,
+    type NewProducts,
+    type NewUser,
+    products,
+    users,
 } from "./schema"
 
 // USER QUERIES
@@ -77,16 +77,19 @@ export const getProductById = async (id: string) => {
   })
 }
 
-export const getAllProducts = async () => {
+
+export const getAllProducts = async (limit?: number, offset?: number) => {
   return db.query.products.findMany({
     with: { users: true },
     orderBy: (products, { desc }) => {
       return [desc(products.createdAt)]
     },
+    ...(limit !== undefined ? { limit } : {}),
+    ...(offset !== undefined ? { offset } : {}),
   })
 }
 
-export const getProductsByUserId = async (id: string) => {
+export const getProductsByUserId = async (id: string, limit?: number, offset?: number) => {
   const listOfUserProduct = await db.query.products.findMany({
     where: eq(products.userId, id),
     with: {
@@ -95,6 +98,8 @@ export const getProductsByUserId = async (id: string) => {
     orderBy: (products, { desc }) => {
       return [desc(products.createdAt)]
     },
+    ...(limit !== undefined ? { limit } : {}),
+    ...(offset !== undefined ? { offset } : {}),
   })
 
   return listOfUserProduct

@@ -1,5 +1,5 @@
 import { PackageIcon } from "lucide-react"
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import { Introduction } from "../components/home/Introduction"
 import { NoProductPlaceholder } from "../components/home/NoProductPlaceholder"
 import { ProductCard } from "../components/ProductCard"
@@ -7,7 +7,41 @@ import { useGetProducts } from "../hooks/web/useGetProducts"
 import { Screen } from "./Screen"
 
 const HomeScreen: React.FC = () => {
-  const { data: products, isLoading, isError } = useGetProducts()
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetProducts();
+
+  // Flatten paginated data
+  const products = data?.pages.flat() || [];
+
+  // Ref for infinite scroll trigger
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1 }
+    );
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   return (
     <Screen isLoading={isLoading} isError={isError}>
       <div className="space-y-10">
@@ -19,35 +53,44 @@ const HomeScreen: React.FC = () => {
             All Products
           </h2>
 
-          {products?.length === 0 ? (
+          {products.length === 0 ? (
             <NoProductPlaceholder />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products?.map((product) => (
-                <ProductCard.Root
-                  key={product.id}
-                  to={`/product/${product.id}`}
-                >
-                  <ProductCard.Image
-                    src={product.imageUrl}
-                    alt={product.title}
-                  />
-                  <div className="card-body p-4">
-                    <ProductCard.Title>{product.title}</ProductCard.Title>
-                    <ProductCard.Body>{product.description}</ProductCard.Body>
-                    <ProductCard.UserDetails
-                      name={product.users?.name}
-                      imageUrl={product.users?.imageUrl}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {products.map((product) => (
+                  <ProductCard.Root
+                    key={product.id}
+                    to={`/product/${product.id}`}
+                  >
+                    <ProductCard.Image
+                      src={product.imageUrl}
+                      alt={product.title}
                     />
-                  </div>
-                </ProductCard.Root>
-              ))}
-            </div>
+                    <div className="card-body p-4">
+                      <ProductCard.Title>{product.title}</ProductCard.Title>
+                      <ProductCard.Body>{product.description}</ProductCard.Body>
+                      <ProductCard.UserDetails
+                        name={product.users?.name}
+                        imageUrl={product.users?.imageUrl}
+                      />
+                    </div>
+                  </ProductCard.Root>
+                ))}
+              </div>
+              {hasNextPage && (
+                <div ref={loadMoreRef} className="flex justify-center mt-6">
+                  {isFetchingNextPage && (
+                    <span className="text-primary">Loading more...</span>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
     </Screen>
-  )
+  );
 }
 
 export default HomeScreen

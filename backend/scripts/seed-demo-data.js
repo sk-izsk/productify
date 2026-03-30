@@ -3,7 +3,11 @@ const { Client } = require("pg")
 
 dotenv.config({ path: ".env" })
 
+// Existing products to create (for backward compatibility)
 const PRODUCTS_TO_CREATE = 10
+// Additional products to add (majority by PRODUCT_OWNER_ID)
+const ADDITIONAL_PRODUCTS = 200
+const MAJORITY_OWNER_PRODUCTS = 150 // At least 150 by PRODUCT_OWNER_ID
 const COMMENTS_PER_PRODUCT = 10
 const USERS_TO_CREATE = 5
 const PRODUCT_OWNER_ID = "user_3Au9sZ53rbtb3ps5SUb3KvixvEX"
@@ -146,6 +150,7 @@ async function main() {
     let productsCreated = 0
     let commentsCreated = 0
 
+    // Create initial set of products (legacy, all by PRODUCT_OWNER_ID)
     for (
       let productIndex = 0;
       productIndex < PRODUCTS_TO_CREATE;
@@ -183,7 +188,46 @@ async function main() {
           `,
           [content, commenterId, productId],
         )
+        commentsCreated += 1
+      }
+    }
 
+    // Add 200 more products, at least 150 by PRODUCT_OWNER_ID
+    for (let i = 0; i < ADDITIONAL_PRODUCTS; i += 1) {
+      // First MAJORITY_OWNER_PRODUCTS are by PRODUCT_OWNER_ID, rest random
+      const ownerId =
+        i < MAJORITY_OWNER_PRODUCTS ? PRODUCT_OWNER_ID : pick(userIds)
+      const title = makeProductTitle(PRODUCTS_TO_CREATE + i)
+      const description = makeDescription()
+      const imageUrl = makeImageUrl(PRODUCTS_TO_CREATE + i)
+
+      const productInsert = await client.query(
+        `
+        INSERT INTO products (title, description, image_url, user_id)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id
+        `,
+        [title, description, imageUrl, ownerId],
+      )
+
+      const productId = productInsert.rows[0].id
+      productsCreated += 1
+
+      for (
+        let commentIndex = 0;
+        commentIndex < COMMENTS_PER_PRODUCT;
+        commentIndex += 1
+      ) {
+        const commenterId = pick(userIds)
+        const content = makeComment(commentIndex)
+
+        await client.query(
+          `
+          INSERT INTO comments (content, user_id, product_id)
+          VALUES ($1, $2, $3)
+          `,
+          [content, commenterId, productId],
+        )
         commentsCreated += 1
       }
     }
