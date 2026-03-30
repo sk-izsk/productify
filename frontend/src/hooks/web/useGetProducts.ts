@@ -14,9 +14,5 @@ export const useGetProducts = () => {
       return allPages.length * PAGE_SIZE
     },
     initialPageParam: 0,
-    // Add pageParam to queryKey for dependency
-    select: (data) => data,
-    // The queryKey will be ["products", pageParam] for each page
-    // This is handled internally by react-query for infinite queries
   })
 }

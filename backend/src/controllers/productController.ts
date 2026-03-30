@@ -1,17 +1,21 @@
-import type { Request, Response } from "express";
-import * as dbQueries from "../db/queries";
-import { requireUserId } from "../utils/auth";
+import type { Request, Response } from "express"
+import * as dbQueries from "../db/queries"
+import { requireUserId } from "../utils/auth"
 export const getAllProducts = async (request: Request, response: Response) => {
   try {
-    const MAX_LIMIT = 50;
-    let limit = request.query.limit ? parseInt(request.query.limit as string, 10) : MAX_LIMIT;
-    if (isNaN(limit) || limit > MAX_LIMIT) limit = MAX_LIMIT;
-    const offset = request.query.offset ? parseInt(request.query.offset as string, 10) : undefined;
-    const products = await dbQueries.getAllProducts(limit, offset);
-    response.status(200).json(products);
+    const MAX_LIMIT = 50
+    let limit = request.query.limit
+      ? parseInt(request.query.limit as string, 10)
+      : MAX_LIMIT
+    if (isNaN(limit) || limit > MAX_LIMIT) limit = MAX_LIMIT
+    const offset = request.query.offset
+      ? parseInt(request.query.offset as string, 10)
+      : undefined
+    const products = await dbQueries.getAllProducts(limit, offset)
+    response.status(200).json(products)
   } catch (error) {
-    console.error("Error fetching products:", error);
-    response.status(500).json({ error: "Failed to fetch products" });
+    console.error("Error fetching products:", error)
+    response.status(500).json({ error: "Failed to fetch products" })
   }
 }
 
@@ -31,19 +35,25 @@ export const getProductById = async (request: Request, response: Response) => {
 
 export const getUserProducts = async (request: Request, response: Response) => {
   try {
-    const MAX_LIMIT = 50;
-    const userId = requireUserId(request, response);
+    const MAX_LIMIT = 50
+    const userId = requireUserId(request, response)
     if (!userId) {
-      return;
+      return
     }
-    let limit = request.query.limit ? parseInt(request.query.limit as string, 10) : MAX_LIMIT;
-    if (isNaN(limit) || limit > MAX_LIMIT) limit = MAX_LIMIT;
-    const offset = request.query.offset ? parseInt(request.query.offset as string, 10) : undefined;
-    const products = await dbQueries.getProductsByUserId(userId, limit, offset);
-    response.status(200).json(products);
+    let limit = request.query.limit
+      ? parseInt(request.query.limit as string, 10)
+      : MAX_LIMIT
+    if (isNaN(limit) || limit > MAX_LIMIT) {
+      limit = MAX_LIMIT
+    }
+    const offset = request.query.offset
+      ? parseInt(request.query.offset as string, 10)
+      : undefined
+    const products = await dbQueries.getProductsByUserId(userId, limit, offset)
+    response.status(200).json(products)
   } catch (error) {
-    console.error("Error fetching user products:", error);
-    response.status(500).json({ error: "Failed to fetch user products" });
+    console.error("Error fetching user products:", error)
+    response.status(500).json({ error: "Failed to fetch user products" })
   }
 }
 

@@ -1,8 +1,9 @@
 import { PlusIcon } from "lucide-react"
-import React, { useEffect, useRef } from "react"
+import React from "react"
 import { Link, useNavigate } from "react-router"
 import { ProfileProductCard } from "../components/profile/ProfileProductCard"
 import { ProfileProductEmptyPlaceholder } from "../components/profile/ProfileProductEmptyPlaceholder"
+import { usePagination } from "../hooks/usePagination"
 import { useDeleteProduct } from "../hooks/web/useDeleteProduct"
 import { useMyProducts } from "../hooks/web/useMyProduct"
 import { Screen } from "./Screen"
@@ -16,33 +17,15 @@ const ProfileScreen: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useMyProducts();
+  } = useMyProducts()
 
-  // Flatten paginated data
-  const products = data?.pages?.flat() || [];
+  const products = data?.pages?.flat() || []
 
-  // Ref for infinite scroll trigger
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 1 }
-    );
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-    return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current);
-      }
-    };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const loadMoreRef = usePagination({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
   const deleteProduct = useDeleteProduct()
 
   const handleDelete = (id: string) => {

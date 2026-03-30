@@ -1,8 +1,9 @@
 import { PackageIcon } from "lucide-react"
-import React, { useEffect, useRef } from "react"
+import React from "react"
 import { Introduction } from "../components/home/Introduction"
 import { NoProductPlaceholder } from "../components/home/NoProductPlaceholder"
 import { ProductCard } from "../components/ProductCard"
+import { usePagination } from "../hooks/usePagination"
 import { useGetProducts } from "../hooks/web/useGetProducts"
 import { Screen } from "./Screen"
 
@@ -14,33 +15,15 @@ const HomeScreen: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetProducts();
+  } = useGetProducts()
 
-  // Flatten paginated data
-  const products = data?.pages.flat() || [];
+  const products = data?.pages.flat() || []
 
-  // Ref for infinite scroll trigger
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 1 }
-    );
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-    return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current);
-      }
-    };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const loadMoreRef = usePagination({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
 
   return (
     <Screen isLoading={isLoading} isError={isError}>
@@ -90,7 +73,7 @@ const HomeScreen: React.FC = () => {
         </div>
       </div>
     </Screen>
-  );
+  )
 }
 
 export default HomeScreen
