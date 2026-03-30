@@ -8,8 +8,16 @@ export const syncUser = async (userData: Partial<User> | NewUser) => {
   return response.json()
 }
 
-export const getAllProducts = async () => {
-  const response = await baseApi.get<Product[]>("products")
+export const getAllProducts = async (limit?: number, offset?: number) => {
+  const DEFAULT_LIMIT = 50
+  const searchParams: Record<string, string> = {}
+  searchParams.limit = String(limit ?? DEFAULT_LIMIT)
+  if (offset !== undefined) {
+    searchParams.offset = String(offset)
+  }
+  const response = await baseApi.get<Product[]>("products", {
+    searchParams,
+  })
   return response.json()
 }
 
@@ -18,8 +26,16 @@ export const getProductById = async (productId: string) => {
   return response.json()
 }
 
-export const getMyProducts = async () => {
-  const response = await baseApi.get<Product[]>("products/my")
+export const getMyProducts = async (limit?: number, offset?: number) => {
+  const DEFAULT_LIMIT = 50
+  const searchParams: Record<string, string> = {}
+  searchParams.limit = String(limit ?? DEFAULT_LIMIT)
+  if (offset !== undefined) {
+    searchParams.offset = String(offset)
+  }
+  const response = await baseApi.get<Product[]>("products/my", {
+    searchParams,
+  })
   const data = await response.json<Product[] | { error?: string }>()
   return Array.isArray(data) ? data : []
 }
