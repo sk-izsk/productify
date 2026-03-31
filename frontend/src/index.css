@@ -2,3 +2,24 @@
 @plugin "daisyui" {
   themes: all;
 }
+
+@theme {
+  --font-manrope: "Manrope", sans-serif;
+  --font-headline: "Manrope", sans-serif;
+  --color-background: #f7f9fb;
+  --color-on-surface: #191c1e;
+  --color-on-surface-variant: #424752;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-container: #eceef0;
+  --color-primary: #00488d;
+  --color-primary-fixed: #d6e3ff;
+  --color-on-primary-fixed: #001b3d;
+  --color-outline-variant: #c2c6d4;
+  --color-secondary-fixed: #cfe6f2;
+}
+
+body {
+  font-family: var(--font-manrope);
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+}

@@ -1,5 +1,4 @@
 import { SignInButton, useAuth } from "@clerk/react"
-import { SparklesIcon } from "lucide-react"
 import React from "react"
 import { Link } from "react-router"
 
@@ -7,37 +6,42 @@ export const Introduction: React.FC = () => {
   const { isSignedIn } = useAuth()
 
   return (
-    <div className="hero bg-linear-to-br from-base-300 via-base-200 to-base-300 rounded-box overflow-hidden">
-      <div className="hero-content flex-col lg:flex-row-reverse gap-10 py-10">
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-110" />
-          <img
-            src="/image.png"
-            alt="Creator"
-            className="relative h-64 lg:h-72 rounded-2xl shadow-2xl"
-          />
-        </div>
-        <div className="text-center lg:text-left">
-          <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
-            Share Your <span className="text-primary">Products</span>
-          </h1>
-          <p className="py-4 text-base-content/60">
-            Upload, discover, and connect with creators.
-          </p>
+    <div className="relative h-[600px] md:h-[800px] w-full rounded-2xl overflow-hidden group mb-20">
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
+        style={{ backgroundImage: "url('/image.png')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-on-surface/60 to-transparent"></div>
+      </div>
+      <div className="relative h-full flex flex-col justify-center px-8 md:px-16 max-w-4xl">
+        <span className="text-white/80 font-manrope text-xs uppercase tracking-[0.3em] mb-4">Creator Platform</span>
+        <h1 className="text-5xl md:text-7xl font-light text-white leading-tight mb-8 font-headline tracking-tighter">
+          Share Your <br/><span className="font-bold italic">Products</span>
+        </h1>
+        <p className="text-white/90 text-lg font-light mb-12 max-w-lg leading-relaxed">
+          Upload, discover, and connect with visionary creators. A global destination for curated objects.
+        </p>
+        <div className="flex gap-4">
           {isSignedIn ? (
-            <Link to="/create" className="btn btn-primary">
-              <SparklesIcon className="size-4" />
+            <Link to="/create" className="bg-white text-primary px-10 py-5 rounded-xl font-semibold tracking-tight hover:bg-primary-fixed transition-all active:scale-95 shadow-xl inline-flex justify-center items-center">
               Start Selling
             </Link>
           ) : (
             <SignInButton mode="modal">
-              <button className="btn btn-primary">
-                <SparklesIcon className="size-4" />
+              <button className="bg-white text-primary px-10 py-5 rounded-xl font-semibold tracking-tight hover:bg-primary-fixed transition-all active:scale-95 shadow-xl">
                 Start Selling
               </button>
             </SignInButton>
           )}
+          <button className="backdrop-blur-md bg-white/10 text-white border border-white/20 px-8 md:px-10 py-5 rounded-xl font-semibold tracking-tight hover:bg-white/20 transition-all active:scale-95 hidden sm:block">
+            Watch Film
+          </button>
         </div>
+      </div>
+      <div className="absolute bottom-8 right-8 flex gap-2 hidden md:flex">
+        <div className="w-12 h-[2px] bg-white"></div>
+        <div className="w-12 h-[2px] bg-white/30"></div>
+        <div className="w-12 h-[2px] bg-white/30"></div>
       </div>
     </div>
   )
