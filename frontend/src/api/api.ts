@@ -8,8 +8,20 @@ export const syncUser = async (userData: Partial<User> | NewUser) => {
   return response.json()
 }
 
-export const getAllProducts = async () => {
-  const response = await baseApi.get<Product[]>("products")
+export const getAllProducts = async (
+  limit?: number,
+  cursor?: { createdAt: string; id: string } | null,
+) => {
+  const searchParams: Record<string, string> = {}
+  if (limit !== undefined) searchParams.limit = String(limit)
+  if (cursor !== undefined && cursor !== null)
+    searchParams.cursor = JSON.stringify(cursor)
+  const response = await baseApi.get<{
+    products: Product[]
+    nextCursor: string | null
+  }>("products", {
+    searchParams,
+  })
   return response.json()
 }
 
@@ -18,10 +30,21 @@ export const getProductById = async (productId: string) => {
   return response.json()
 }
 
-export const getMyProducts = async () => {
-  const response = await baseApi.get<Product[]>("products/my")
-  const data = await response.json<Product[] | { error?: string }>()
-  return Array.isArray(data) ? data : []
+export const getMyProducts = async (
+  limit?: number,
+  cursor?: { createdAt: string; id: string } | null,
+) => {
+  const searchParams: Record<string, string> = {}
+  if (limit !== undefined) searchParams.limit = String(limit)
+  if (cursor !== undefined && cursor !== null)
+    searchParams.cursor = JSON.stringify(cursor)
+  const response = await baseApi.get<{
+    products: Product[]
+    nextCursor: string | null
+  }>("products/my", {
+    searchParams,
+  })
+  return response.json()
 }
 
 export const createProduct = async (formData: ProductWriteInput) => {

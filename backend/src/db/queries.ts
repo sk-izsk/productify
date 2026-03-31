@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { and, eq, lt, or } from "drizzle-orm"
 import { db } from "./index"
 import {
   comments,
@@ -58,7 +58,6 @@ export const upsertUser = async (data: NewUser) => {
 
 export const createProduct = async (data: NewProducts) => {
   const [product] = await db.insert(products).values(data).returning()
-
   return product
 }
 
@@ -77,27 +76,55 @@ export const getProductById = async (id: string) => {
   })
 }
 
-export const getAllProducts = async () => {
+export const getAllProducts = async (
+  limit = 50,
+  cursor?: { createdAt: Date; id: string },
+): Promise<any[]> => {
+  let whereClause = undefined
+  if (cursor) {
+    whereClause = or(
+      lt(products.createdAt, cursor.createdAt),
+      and(eq(products.createdAt, cursor.createdAt), lt(products.id, cursor.id)),
+    )
+  }
   return db.query.products.findMany({
+    where: whereClause,
     with: { users: true },
     orderBy: (products, { desc }) => {
-      return [desc(products.createdAt)]
+      return [desc(products.createdAt), desc(products.id)]
     },
+    limit,
   })
 }
 
-export const getProductsByUserId = async (id: string) => {
-  const listOfUserProduct = await db.query.products.findMany({
-    where: eq(products.userId, id),
-    with: {
-      users: true,
-    },
+export const getProductsByUserId = async (
+  id: string,
+  limit = 50,
+  cursor?: { createdAt: Date; id: string },
+): Promise<any[]> => {
+  let whereClause
+  if (cursor) {
+    whereClause = and(
+      eq(products.userId, id),
+      or(
+        lt(products.createdAt, cursor.createdAt),
+        and(
+          eq(products.createdAt, cursor.createdAt),
+          lt(products.id, cursor.id),
+        ),
+      ),
+    )
+  } else {
+    whereClause = eq(products.userId, id)
+  }
+  return db.query.products.findMany({
+    where: whereClause,
+    with: { users: true },
     orderBy: (products, { desc }) => {
-      return [desc(products.createdAt)]
+      return [desc(products.createdAt), desc(products.id)]
     },
+    limit,
   })
-
-  return listOfUserProduct
 }
 
 export const updateProduct = async (

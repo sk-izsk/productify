@@ -3,13 +3,29 @@ import React from "react"
 import { Link, useNavigate } from "react-router"
 import { ProfileProductCard } from "../components/profile/ProfileProductCard"
 import { ProfileProductEmptyPlaceholder } from "../components/profile/ProfileProductEmptyPlaceholder"
+import { usePagination } from "../hooks/usePagination"
 import { useDeleteProduct } from "../hooks/web/useDeleteProduct"
 import { useMyProducts } from "../hooks/web/useMyProduct"
 import { Screen } from "./Screen"
 
 const ProfileScreen: React.FC = () => {
   const navigate = useNavigate()
-  const { data: products, isLoading, isError } = useMyProducts()
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useMyProducts()
+
+  // Flatten paginated data
+  const products = data?.pages?.flatMap((page) => page.products) || []
+  const loadMoreRef = usePagination({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
   const deleteProduct = useDeleteProduct()
 
   const handleDelete = (id: string) => {
@@ -40,21 +56,30 @@ const ProfileScreen: React.FC = () => {
           </div>
         </div>
 
-        {products?.length === 0 ? (
+        {products.length === 0 ? (
           <ProfileProductEmptyPlaceholder />
         ) : (
-          <div className="grid gap-4">
-            {products?.map((product) => (
-              <ProfileProductCard
-                key={product.id}
-                product={product}
-                isDeleting={deleteProduct.isPending}
-                onView={(id) => navigate(`/product/${id}`)}
-                onEdit={(id) => navigate(`/edit/${id}`)}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-4">
+              {products.map((product) => (
+                <ProfileProductCard
+                  key={product.id}
+                  product={product}
+                  isDeleting={deleteProduct.isPending}
+                  onView={(id) => navigate(`/product/${id}`)}
+                  onEdit={(id) => navigate(`/edit/${id}`)}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+            {hasNextPage && (
+              <div ref={loadMoreRef} className="flex justify-center mt-6">
+                {isFetchingNextPage && (
+                  <span className="text-primary">Loading more...</span>
+                )}
+              </div>
+            )}
+          </>
         )}
       </div>
     </Screen>
