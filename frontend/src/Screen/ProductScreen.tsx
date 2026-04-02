@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/react"
-import { ArrowLeftIcon, EditIcon, Trash2Icon } from "lucide-react"
+import { ArrowLeftIcon } from "lucide-react"
 import React from "react"
 import { Link, useNavigate, useParams } from "react-router"
 import { CommentsSection } from "../components/product/CommentsSection"
@@ -35,59 +35,60 @@ const ProductScreen: React.FC = () => {
 
   return (
     <Screen isLoading={isLoading} isError={isError || !product}>
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="btn btn-ghost btn-sm gap-1">
-            <ArrowLeftIcon className="size-4" /> Back
+      <div className="max-w-7xl mx-auto space-y-8 py-8 px-4 sm:px-6">
+        <div className="flex items-center justify-between mb-8">
+          <Link to="/" className="group flex items-center gap-2 text-outline hover:text-primary transition-colors w-fit">
+            <ArrowLeftIcon className="size-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-sm font-label uppercase tracking-widest">Back to Products</span>
           </Link>
-          {isOwner && (
-            <div className="flex gap-2">
-              <Link
-                to={`/edit/${product?.id}`}
-                className="btn btn-ghost btn-sm gap-1"
-              >
-                <EditIcon className="size-4" /> Edit
-              </Link>
-              <button
-                onClick={handleDelete}
-                className="btn btn-error btn-sm gap-1"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <span className="loading loading-spinner loading-xs" />
-                ) : (
-                  <Trash2Icon className="size-4" />
-                )}
-                Delete
-              </button>
-            </div>
-          )}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Image */}
-          <div className="card bg-base-300">
-            <figure className="p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Left Column: Image Area */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="rounded-xl overflow-hidden bg-surface-container-low aspect-[16/10] relative group">
               <img
                 src={product?.imageUrl}
-                alt={product?.title}
-                className="rounded-xl w-full h-80 object-cover"
+                alt={product?.title || "Product Image"}
+                className="w-full h-full object-cover"
               />
-            </figure>
+            </div>
+            {/* Mocked 4-grid detail block */}
+            <div className="grid grid-cols-4 gap-4">
+              <div className="aspect-square rounded-lg overflow-hidden bg-surface-container-low border-2 border-primary">
+                <img src={product?.imageUrl} className="w-full h-full object-cover opacity-100" alt="Detail 1" />
+              </div>
+              <div className="aspect-square rounded-lg overflow-hidden bg-surface-container-low opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+                <img src={product?.imageUrl} className="w-full h-full object-cover scale-110" alt="Detail 2" />
+              </div>
+              <div className="aspect-square rounded-lg overflow-hidden bg-surface-container-low opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+                <img src={product?.imageUrl} className="w-full h-full object-cover scale-125" alt="Detail 3" />
+              </div>
+              <div className="aspect-square rounded-lg overflow-hidden bg-surface-container-low opacity-60 hover:opacity-100 transition-opacity cursor-pointer relative">
+                <img src={product?.imageUrl} className="w-full h-full object-cover scale-150" alt="Detail 4" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-sm font-bold">+12</div>
+              </div>
+            </div>
           </div>
 
-          <ProductDetails product={product} />
-        </div>
-
-        {/* Comments */}
-        <div className="card bg-base-300">
-          <div className="card-body">
-            <CommentsSection
-              productId={id}
-              comments={product?.comments}
-              currentUserId={userId!}
+          {/* Right Column: Details */}
+          <div className="lg:col-span-5 space-y-8">
+            <ProductDetails 
+              product={product} 
+              isOwner={isOwner} 
+              onDelete={handleDelete} 
+              isDeleting={isPending} 
             />
           </div>
+        </div>
+
+        {/* Comments section */}
+        <div className="mt-24 max-w-3xl lg:px-0">
+          <CommentsSection
+            productId={id}
+            comments={product?.comments}
+            currentUserId={userId!}
+          />
         </div>
       </div>
     </Screen>

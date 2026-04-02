@@ -1,5 +1,4 @@
 import { useAuth } from "@clerk/react"
-import { SaveIcon } from "lucide-react"
 import React from "react"
 import { useNavigate, useParams } from "react-router"
 import { ProductForm } from "../components/product/ProductForm"
@@ -22,29 +21,30 @@ const EditProductScreen: React.FC = () => {
       isError={isError || !product || product.userId !== userId}
       isLoading={isLoading}
     >
-      <ProductForm
-        title="Edit Product"
-        backTo="/profile"
-        submitLabel="Save Changes"
-        errorLabel="Failed to update. Try again."
-        initialValues={product}
-        isPending={updateProduct.isPending}
-        isError={updateProduct.isError}
-        titleIcon={<SaveIcon className="size-5 text-primary" />}
-        onSubmit={(formData) => {
-          updateProduct.mutate(
-            { productId: id as string, formData },
-            {
-              onSuccess: () => navigate(`/product/${id}`),
-            },
-          )
-        }}
-      >
-        <ProductForm.TitleInput />
-        <ProductForm.ImageInput />
-        <ProductForm.ImageDisplay />
-        <ProductForm.DescriptionInput />
-      </ProductForm>
+      <div className="bg-background min-h-screen">
+        <ProductForm
+          title="Edit Masterpiece"
+          subtitle="Refine the details of your Atelier product."
+          backTo="/profile"
+          submitLabel="Save Changes"
+          errorLabel="Failed to update. Try again."
+          initialValues={product}
+          isPending={updateProduct.isPending}
+          isError={updateProduct.isError}
+          onSubmit={(formData) => {
+            updateProduct.mutate(
+              { productId: id as string, formData },
+              {
+                onSuccess: () => navigate(`/product/${id}`),
+              },
+            )
+          }}
+        >
+          <ProductForm.TitleInput />
+          <ProductForm.ImageInput />
+          <ProductForm.DescriptionInput />
+        </ProductForm>
+      </div>
     </Screen>
   )
 }
