@@ -8,9 +8,18 @@ import { authMiddleware } from "./utils/auth"
 
 export const app = express()
 
+const allowedOrigins = new Set(ENV.FRONTEND_URLS)
+
 app.use(
   cors({
-    origin: ENV.FRONTEND_URL,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.size === 0 || allowedOrigins.has(origin)) {
+        callback(null, true)
+        return
+      }
+
+      callback(new Error(`Origin ${origin} not allowed by CORS`))
+    },
     credentials: true,
   }),
 )
