@@ -67,9 +67,14 @@ Productify is a PERN-style application with Clerk authentication, product CRUD, 
 - Clerk Express SDK
 - TypeScript + ts-node + nodemon
 
-## Environment Variables
+## Environment variables
 
-Create environment files for frontend and backend.
+Copy the example files and fill in real values:
+
+```bash
+cp frontend/.env.example frontend/.env
+cp backend/.env.example backend/.env
+```
 
 ### frontend/.env
 
@@ -87,9 +92,13 @@ NODE_ENV=development
 CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
 FRONTEND_URL=http://localhost:5173
+FRONTEND_URLS=http://localhost:5173
 ```
 
-Important: frontend and backend must use keys from the same Clerk instance.
+Notes:
+
+- Frontend and backend must use keys from the same Clerk instance.
+- `FRONTEND_URLS` accepts a comma-separated list. Useful for local dev plus deployed frontend.
 
 ## Getting Started
 
@@ -185,6 +194,86 @@ Base URL: `http://localhost:3020/api`
 
 - Backend root: `GET /`
 - Backend health: `GET /api/health`
+
+## Deployment
+
+Recommended zero-cost demo stack:
+
+- Frontend: Vercel
+- Backend: Render web service
+- Database: Neon Postgres
+- Auth: Clerk
+
+### 1. Create Neon database
+
+- Create a free Neon project.
+- Copy the pooled Postgres connection string.
+- Use that value for `DATABASE_URL` in Render.
+
+### 2. Configure Clerk
+
+- Create or reuse a Clerk application.
+- Copy the publishable key and secret key.
+- Add your Vercel production URL to Clerk allowed origins and redirect URLs.
+
+### 3. Deploy backend to Render
+
+- Create a new Web Service from this repo.
+- Choose `backend` as the root directory.
+- Environment: Docker.
+- Render will use [`backend/Dockerfile`](backend/Dockerfile).
+
+Set these environment variables in Render:
+
+```env
+DATABASE_URL=your_neon_connection_string
+NODE_ENV=production
+CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+FRONTEND_URL=https://your-app.vercel.app
+FRONTEND_URLS=http://localhost:5173,https://your-app.vercel.app
+```
+
+Optional health check path:
+
+```text
+/api/health
+```
+
+### 4. Push database schema
+
+After first backend deploy, run schema push once against Neon:
+
+```bash
+cd backend
+DATABASE_URL=your_neon_connection_string bun run db:push
+```
+
+### 5. Deploy frontend to Vercel
+
+- Import this repo into Vercel.
+- Set `frontend` as the project root.
+- Framework preset: Vite.
+
+Set these environment variables in Vercel:
+
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+VITE_API_URL=https://your-render-service.onrender.com/api
+```
+
+### 6. Final checks
+
+- Open frontend on Vercel.
+- Sign in with Clerk.
+- Confirm `/api/health` works on Render.
+- Create product and comment to verify DB writes.
+
+### Free-tier tradeoffs
+
+- Render free services sleep when idle, so first request can be slow.
+- Neon free is great for demos and portfolio projects, but it still has storage and compute limits.
+- Clerk free is enough for a portfolio app unless traffic grows a lot.
 
 ## Future Improvements
 
