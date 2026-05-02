@@ -17,7 +17,7 @@ const HomeScreen: React.FC = () => {
     isFetchingNextPage,
   } = useGetProducts()
 
-  const products = data?.pages.flat() || []
+  const products = data?.pages?.flat() || []
 
   const loadMoreRef = usePagination({
     hasNextPage,

@@ -7,10 +7,17 @@ import ProfileScreen from "../../src/screen/ProfileScreen"
 const navigateSpy = vi.hoisted(() => vi.fn())
 
 const productsState = vi.hoisted(() => ({
-  data: [] as Array<{
-    id: string
-    title: string
-  }>,
+  data: {
+    pages: [] as Array<
+      Array<{
+        id: string
+        title: string
+      }>
+    >,
+  },
+  hasNextPage: false,
+  isFetchingNextPage: false,
+  fetchNextPage: vi.fn(),
   isLoading: false,
   isError: false,
 }))
@@ -66,7 +73,8 @@ vi.mock("../../src/components/profile/ProfileProductCard", () => ({
 
 describe("ProfileScreen", () => {
   beforeEach(() => {
-    productsState.data = []
+    productsState.data.pages = []
+    productsState.fetchNextPage.mockReset()
     productsState.isLoading = false
     productsState.isError = false
     deleteProductState.isPending = false
@@ -88,7 +96,7 @@ describe("ProfileScreen", () => {
   it("wires view, edit, and delete actions for profile products", async () => {
     const user = userEvent.setup()
     const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true)
-    productsState.data = [{ id: "product-1", title: "Desk Lamp" }]
+    productsState.data.pages = [[{ id: "product-1", title: "Desk Lamp" }]]
 
     render(
       <MemoryRouter>

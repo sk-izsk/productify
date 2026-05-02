@@ -4,7 +4,28 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import HomeScreen from "../../src/screen/HomeScreen"
 
 const productsState = vi.hoisted(() => ({
-  data: [] as Array<{
+  data: {
+    pages: [] as Array<
+      Array<{
+        id: string
+        title: string
+        description: string
+        imageUrl: string
+        userId: string
+        createdAt: string
+        updatedAt: string
+        users?: { name: string | null; imageUrl: string | null }
+      }>
+    >,
+  },
+  hasNextPage: false,
+  isFetchingNextPage: false,
+  fetchNextPage: vi.fn(),
+  isLoading: false,
+  isError: false,
+}))
+
+type Product = {
     id: string
     title: string
     description: string
@@ -13,10 +34,7 @@ const productsState = vi.hoisted(() => ({
     createdAt: string
     updatedAt: string
     users?: { name: string | null; imageUrl: string | null }
-  }>,
-  isLoading: false,
-  isError: false,
-}))
+}
 
 vi.mock("../../src/hooks/web/useGetProducts", () => ({
   useGetProducts: () => productsState,
@@ -44,7 +62,8 @@ vi.mock("../../src/components/ProductCard", () => ({
 
 describe("HomeScreen", () => {
   beforeEach(() => {
-    productsState.data = []
+    productsState.data.pages = []
+    productsState.fetchNextPage.mockReset()
     productsState.isLoading = false
     productsState.isError = false
   })
@@ -61,21 +80,21 @@ describe("HomeScreen", () => {
   })
 
   it("renders the product list when products are available", () => {
-    productsState.data = [
-      {
-        id: "product-1",
-        title: "Desk Lamp",
-        description: "Warm light",
-        imageUrl: "https://example.com/lamp.png",
-        userId: "user-1",
-        createdAt: "2026-03-18T10:00:00.000Z",
-        updatedAt: "2026-03-18T10:00:00.000Z",
-        users: {
-          name: "Iris",
-          imageUrl: "https://example.com/iris.png",
-        },
+    const product: Product = {
+      id: "product-1",
+      title: "Desk Lamp",
+      description: "Warm light",
+      imageUrl: "https://example.com/lamp.png",
+      userId: "user-1",
+      createdAt: "2026-03-18T10:00:00.000Z",
+      updatedAt: "2026-03-18T10:00:00.000Z",
+      users: {
+        name: "Iris",
+        imageUrl: "https://example.com/iris.png",
       },
-    ]
+    }
+
+    productsState.data.pages = [[product]]
 
     render(
       <MemoryRouter>
